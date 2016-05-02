@@ -21,21 +21,12 @@ app.get('/calculator/:operator', function (req, res) {
   } else if (req.params.operator === "div") {
     result = num1 / num2;
   }
-  createObject(operation, num1, num2, result, function(obj) {
-      objToSend=obj;
-    });
-  res.send(JSON.stringify(objToSend));
-});
-
-function createObject(operation, num1, num2, result, callback) {
-  newObj = 
-     {"operator": operation,
+  res.send(JSON.stringify({"operator": operation,
       "firstOperand": num1,
       "secondOperand": num2,
       "solution": result
-     }
-  callback(newObj);
-}
+     }));
+});
 
 /* YOU DON'T HAVE TO CHANGE ANYTHING BELOW THIS LINE :) */
 
