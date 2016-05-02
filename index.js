@@ -10,7 +10,6 @@ var operation;
 app.get('/calculator/:operator', function (req, res) {
   num1= parseInt(req.query.num1, 10);
   num2= parseInt(req.query.num2, 10);
-  var objToSend;
   operation = req.params.operator;
   if(req.params.operator === "add") {
     result = num1 + num2;
