@@ -4,7 +4,6 @@ var app = express();
 var num1;
 var num2;
 var result;
-var newObj = {};
 var operation;
 
 app.get('/calculator/:operator', function (req, res) {
