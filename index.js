@@ -1,21 +1,41 @@
 var express = require('express');
 var app = express();
 
-app.get('/hello', function (req, res) {
-  if(req.query.name) {
-    res.send('<h1>Hello ' +req.query.name+'!</h1>');
+var num1;
+var num2;
+var result;
+var newObj = {};
+var operation;
+
+app.get('/calculator/:operator', function (req, res) {
+  num1= parseInt(req.query.num1, 10);
+  num2= parseInt(req.query.num2, 10);
+  var objToSend;
+  operation = req.params.operator;
+  if(req.params.operator === "add") {
+    result = num1 + num2;
+  } else if (req.params.operator === "mult") {
+    result = num1 * num2;
+  } else if (req.params.operator === "sub") {
+    result = num1 - num2;
+  } else if (req.params.operator === "div") {
+    result = num1 / num2;
   }
-  else {
-  res.send('<h1>Hello World!</h1>');
-  }
+  createObject(operation, num1, num2, result, function(obj) {
+      objToSend=obj;
+    });
+  res.send(JSON.stringify(objToSend));
 });
 
-app.get('/hello/:who/:where', function (req, res) {
-  console.log(req.params)
-  res.send('<h1>Hello ' +req.params.who+'!</h1>');
-});
-
-
+function createObject(operation, num1, num2, result, callback) {
+  newObj = 
+     {"operator": operation,
+      "firstOperand": num1,
+      "secondOperand": num2,
+      "solution": result
+     }
+  callback(newObj);
+}
 
 /* YOU DON'T HAVE TO CHANGE ANYTHING BELOW THIS LINE :) */
 
