@@ -1,30 +1,61 @@
 var express = require('express');
 var app = express();
 
-var num1;
-var num2;
-var result;
-var operation;
+var mysql = require('mysql');
 
-app.get('/calculator/:operator', function (req, res) {
-  num1= parseInt(req.query.num1, 10);
-  num2= parseInt(req.query.num2, 10);
-  operation = req.params.operator;
-  if(req.params.operator === "add") {
-    result = num1 + num2;
-  } else if (req.params.operator === "mult") {
-    result = num1 * num2;
-  } else if (req.params.operator === "sub") {
-    result = num1 - num2;
-  } else if (req.params.operator === "div") {
-    result = num1 / num2;
-  }
-  res.send(JSON.stringify({"operator": operation,
-      "firstOperand": num1,
-      "secondOperand": num2,
-      "solution": result
-     }));
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'adelporte',
+  password : '',
+  database: 'reddit'
 });
+
+function getRedditPosts(callback) {
+  connection.query(`SELECT p.title, p.url, p.createdAt, p.updatedAt, p.subredditId, u.username 
+      FROM posts p 
+      JOIN users u 
+      ON p.userId=u.Id 
+      WHERE userId=1
+      ORDER BY p.createdAt 
+      LIMIT 5`,
+    function(err, res) {
+      if (err) {
+        callback(err);
+      }
+      else {
+        callback(null, res);
+      }
+    });
+}
+
+app.get('/posts', function(req, res) {
+  getRedditPosts(function(err, posts) {
+    if (err) {
+      res.status(500).send('oops try again later!');
+    }
+    else {
+      var allPosts = posts.map(function(post) {
+        return `
+          <li class="content-item">
+            <h2 class="content-item__title">
+              <a href=${post.url}>${post.title}</a>
+            </h2>
+            <p>Created by ${post.username}</p>
+          </li>`});
+        
+        
+      res.send(`
+          <div id="contents">
+            <h1>List of posts</h1>
+              <ul class="contents-list">
+                ${allPosts.join('')}
+              </ul>
+          </div>
+      `);
+    }
+  });
+});
+
 
 /* YOU DON'T HAVE TO CHANGE ANYTHING BELOW THIS LINE :) */
 
